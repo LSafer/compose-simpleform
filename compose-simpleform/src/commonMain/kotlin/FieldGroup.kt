@@ -8,7 +8,7 @@ class FieldGroup(val fields: List<FormField<*>>) {
         internal set
 
     val errors by derivedStateOf {
-        fields.mapNotNull { it.error }
+        fields.flatMap { it.errors }
     }
     val isDirty by derivedStateOf {
         fields.fold(false) { result, field ->

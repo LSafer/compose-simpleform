@@ -1,15 +1,12 @@
 package net.lsafer.compose.simpleform
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusRequester
 
-sealed class FormField<T>(
-    /**
-     * The default value of the field for any entity.
-     */
-    val defaultValue: T,
-    private val onValidate: ValidateScope.(T) -> Unit
-) {
+sealed class FormField<T> {
     /**
      * The form this field belongs/bound to.
      */
@@ -26,8 +23,7 @@ sealed class FormField<T>(
      *
      * > Can be changed via [update]
      */
-    var latestValue by mutableStateOf(defaultValue)
-        protected set
+    abstract val latestValue: T
 
     /**
      * The current validation or api error of the field.
@@ -37,13 +33,16 @@ sealed class FormField<T>(
     var error by mutableStateOf<String?>(null)
 
     /**
+     * A list of the errors produced by this field and all its subfields (if any).
+     */
+    abstract val errors: List<String>
+
+    /**
      * True, when the user changed the current value from the latest one.
      *
      * > UI logic should ignore this when [Form.isDraft] is true.
      */
     abstract val isDirty: Boolean
-
-    private val _isValidValidationScope = ValidateScope() // this is to prevent gc
 
     /**
      * True, if [value] is valid according to field validation logic.
@@ -51,12 +50,7 @@ sealed class FormField<T>(
      * > This is decoupled from [validate] and will respond to every value change.
      * > Field UI should use [error] instead.
      */
-    val isValid by derivedStateOf {
-        onValidate(_isValidValidationScope, value)
-        val isValid = _isValidValidationScope.error == null
-        _isValidValidationScope.error = null
-        isValid
-    }
+    abstract val isValid: Boolean
 
     /**
      * The focus requester set to the UI component.
@@ -67,93 +61,25 @@ sealed class FormField<T>(
     val previous by derivedStateOf { form.fields.getOrNull(index - 1) }
     val next by derivedStateOf { form.fields.getOrNull(index + 1) }
 
-    protected abstract fun setValue0(newValue: T)
-
     /**
      * Change field value to default one.
      */
-    fun clear() {
-        error = null
-        setValue0(defaultValue)
-    }
+    abstract fun clear()
 
     /**
      * Change field value to latest one.
      */
-    fun reset() {
-        error = null
-        setValue0(latestValue)
-    }
+    abstract fun reset()
 
     /**
      * Update latest field value to [newValue].
      */
-    fun update(newValue: T) {
-        error = null
-        latestValue = newValue
-        setValue0(newValue)
-    }
+    abstract fun update(newValue: T)
 
     /**
      * Run validation. This should be invoked when field loses focus.
      *
      * > This is to populate [error] with validation error and NOT for [isValid].
      */
-    fun validate() {
-        // No need to cache scope object here, this is only invoked on focus loss.
-        val scope = ValidateScope()
-        scope.apply { onValidate(value) }
-        error = scope.error
-    }
-}
-
-class SingleFormField<T>(
-    defaultValue: T,
-    onValidate: ValidateScope.(T) -> Unit = { },
-) : FormField<T>(defaultValue, onValidate) {
-    override var value by mutableStateOf(defaultValue)
-    override val isDirty by derivedStateOf { value != latestValue }
-
-    override fun setValue0(newValue: T) {
-        value = newValue
-    }
-}
-
-class MapFormField<K, V>(
-    defaultValue: Map<K, V>,
-    onValidate: ValidateScope.(Map<K, V>) -> Unit = { },
-) : FormField<Map<K, V>>(defaultValue, onValidate) {
-    override val value = mutableStateMapOf<K, V>().also { it.putAll(defaultValue) }
-    override val isDirty by derivedStateOf { value.toMap() != latestValue }
-
-    override fun setValue0(newValue: Map<K, V>) {
-        value.clear()
-        value.putAll(defaultValue)
-    }
-}
-
-class ListFormField<E>(
-    defaultValue: List<E>,
-    onValidate: ValidateScope.(List<E>) -> Unit = { },
-) : FormField<List<E>>(defaultValue, onValidate) {
-    override val value = mutableStateListOf<E>().also { it.addAll(defaultValue) }
-    override val isDirty by derivedStateOf { value.toList() != latestValue }
-
-    override fun setValue0(newValue: List<E>) {
-        value.clear()
-        value.addAll(defaultValue)
-    }
-}
-
-class SetFormField<E>(
-    defaultValue: Set<E>,
-    onValidate: ValidateScope.(Set<E>) -> Unit = { },
-) : FormField<Set<E>>(defaultValue, onValidate) {
-    override val value = mutableStateSetOf<E>().also { it.addAll(defaultValue) }
-    override val isDirty by derivedStateOf { value.toSet() != latestValue }
-
-    override fun setValue0(newValue: Set<E>) {
-        value.clear()
-        value.addAll(defaultValue)
-    }
+    abstract fun validate()
 }

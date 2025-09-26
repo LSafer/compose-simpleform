@@ -36,7 +36,7 @@ abstract class Form(isDraft: Boolean = false) {
      * A list of all error messages of fields.
      */
     val errors by derivedStateOf {
-        _fields.mapNotNull { it.error }
+        _fields.flatMap { it.errors }
     }
 
     /**
