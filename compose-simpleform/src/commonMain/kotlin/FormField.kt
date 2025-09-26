@@ -41,7 +41,7 @@ sealed class FormField<T>(
      *
      * > UI logic should ignore this when [Form.isDraft] is true.
      */
-    val isDirty by derivedStateOf { value != latestValue }
+    abstract val isDirty: Boolean
 
     private val _isValidValidationScope = ValidateScope() // this is to prevent gc
 
@@ -112,6 +112,7 @@ class SingleFormField<T>(
     onValidate: ValidateScope.(T) -> Unit = { },
 ) : FormField<T>(defaultValue, onValidate) {
     override var value by mutableStateOf(defaultValue)
+    override val isDirty by derivedStateOf { value != latestValue }
 
     override fun setValue0(newValue: T) {
         value = newValue
@@ -123,6 +124,7 @@ class MapFormField<K, V>(
     onValidate: ValidateScope.(Map<K, V>) -> Unit = { },
 ) : FormField<Map<K, V>>(defaultValue, onValidate) {
     override val value = mutableStateMapOf<K, V>().also { it.putAll(defaultValue) }
+    override val isDirty by derivedStateOf { value.toMap() != latestValue }
 
     override fun setValue0(newValue: Map<K, V>) {
         value.clear()
@@ -135,6 +137,7 @@ class ListFormField<E>(
     onValidate: ValidateScope.(List<E>) -> Unit = { },
 ) : FormField<List<E>>(defaultValue, onValidate) {
     override val value = mutableStateListOf<E>().also { it.addAll(defaultValue) }
+    override val isDirty by derivedStateOf { value.toList() != latestValue }
 
     override fun setValue0(newValue: List<E>) {
         value.clear()
@@ -147,6 +150,7 @@ class SetFormField<E>(
     onValidate: ValidateScope.(Set<E>) -> Unit = { },
 ) : FormField<Set<E>>(defaultValue, onValidate) {
     override val value = mutableStateSetOf<E>().also { it.addAll(defaultValue) }
+    override val isDirty by derivedStateOf { value.toSet() != latestValue }
 
     override fun setValue0(newValue: Set<E>) {
         value.clear()
