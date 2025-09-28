@@ -19,6 +19,12 @@ typealias FormSetFormFieldSpec<E> = () -> FormSetFormField<E>
 //
 
 fun <T> field(
+    onValidate: ValidateScope<T?>.() -> Unit = { },
+): SingleFormFieldSpec<T?> = {
+    SingleFormField(defaultValue = null, onValidate)
+}
+
+fun <T> field(
     defaultValue: T,
     onValidate: ValidateScope<T>.() -> Unit = { },
 ): SingleFormFieldSpec<T> = {
