@@ -38,7 +38,7 @@ sealed class FormFormField<T> : FormField<T>()
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
 class FormSingleFormField<T : Form>(
     initialValue: T,
-    private val onValidate: ValidateScope<T>.() -> Unit = { },
+    private val validator: Validator<T> = { },
 ) : FormFormField<T>() {
     override var value by mutableStateOf(initialValue)
     override var latestValue by mutableStateOf(initialValue)
@@ -48,10 +48,7 @@ class FormSingleFormField<T : Form>(
     override val errors by derivedStateOf { listOfNotNull(error) + value.errors }
 
     override val isValid by derivedStateOf {
-        val scope = ValidateScope(value)
-        onValidate(scope)
-        val isValid = scope.error == null
-        isValid && value.isValid
+        validator.isValid(value) && value.isValid
     }
 
     override fun clear() {
@@ -70,9 +67,7 @@ class FormSingleFormField<T : Form>(
     }
 
     override fun validate() {
-        val scope = ValidateScope(value)
-        onValidate(scope)
-        error = scope.error
+        error = validator.validate(value)
         value.validate()
     }
 }
@@ -80,7 +75,7 @@ class FormSingleFormField<T : Form>(
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
 class FormMapFormField<K, V : Form>(
     initialValue: Map<K, V>,
-    private val onValidate: ValidateScope<Map<K, V>>.() -> Unit = { },
+    private val validator: Validator<Map<K, V>> = { },
 ) : FormFormField<Map<K, V>>() {
     override val value = mutableStateMapOf<K, V>().also { it.putAll(initialValue) }
     override var latestValue by mutableStateOf(initialValue)
@@ -94,10 +89,8 @@ class FormMapFormField<K, V : Form>(
     }
 
     override val isValid by derivedStateOf {
-        val scope = ValidateScope(value.toMap())
-        onValidate(scope)
-        val isValid = scope.error == null
-        isValid && value.values.all { it.isValid }
+        validator.isValid(value.toMap()) &&
+                value.values.all { it.isValid }
     }
 
     override fun clear() {
@@ -121,9 +114,7 @@ class FormMapFormField<K, V : Form>(
 
     override fun validate() {
         // No need to cache scope object here, this is only invoked on focus loss.
-        val scope = ValidateScope(value.toMap())
-        onValidate(scope)
-        error = scope.error
+        error = validator.validate(value.toMap())
         value.values.forEach { it.validate() }
     }
 }
@@ -131,7 +122,7 @@ class FormMapFormField<K, V : Form>(
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
 class FormListFormField<E : Form>(
     initialValue: List<E>,
-    private val onValidate: ValidateScope<List<E>>.() -> Unit = { },
+    private val validator: Validator<List<E>> = { },
 ) : FormFormField<List<E>>() {
     override val value = mutableStateListOf<E>().also { it.addAll(initialValue) }
     override var latestValue by mutableStateOf(initialValue)
@@ -145,10 +136,8 @@ class FormListFormField<E : Form>(
     }
 
     override val isValid by derivedStateOf {
-        val scope = ValidateScope(value.toList())
-        onValidate(scope)
-        val isValid = scope.error == null
-        isValid && value.all { it.isValid }
+        validator.isValid(value.toList()) &&
+                value.all { it.isValid }
     }
 
     override fun clear() {
@@ -171,10 +160,7 @@ class FormListFormField<E : Form>(
     }
 
     override fun validate() {
-        // No need to cache scope object here, this is only invoked on focus loss.
-        val scope = ValidateScope(value.toList())
-        onValidate(scope)
-        error = scope.error
+        error = validator.validate(value.toList())
         value.forEach { it.validate() }
     }
 }
@@ -182,7 +168,7 @@ class FormListFormField<E : Form>(
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
 class FormSetFormField<E : Form>(
     initialValue: Set<E>,
-    private val onValidate: ValidateScope<Set<E>>.() -> Unit = { },
+    private val validator: Validator<Set<E>> = { },
 ) : FormFormField<Set<E>>() {
     override val value = mutableStateSetOf<E>().also { it.addAll(initialValue) }
     override var latestValue by mutableStateOf(initialValue)
@@ -196,10 +182,8 @@ class FormSetFormField<E : Form>(
     }
 
     override val isValid by derivedStateOf {
-        val scope = ValidateScope(value.toSet())
-        onValidate(scope)
-        val isValid = scope.error == null
-        isValid && value.all { it.isValid }
+        validator.isValid(value.toSet()) &&
+                value.all { it.isValid }
     }
 
     override fun clear() {
@@ -222,10 +206,7 @@ class FormSetFormField<E : Form>(
     }
 
     override fun validate() {
-        // No need to cache scope object here, this is only invoked on focus loss.
-        val scope = ValidateScope(value.toSet())
-        onValidate(scope)
-        error = scope.error
+        error = validator.validate(value.toSet())
         value.forEach { it.validate() }
     }
 }

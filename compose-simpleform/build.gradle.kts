@@ -47,6 +47,7 @@ kotlin {
     }
     sourceSets.commonMain.dependencies {
         implementation(compose.runtime)
+        implementation(libs.arrow.core)
         implementation(libs.androidx.lifecycle.viewmodel.compose)
     }
 }

@@ -19,37 +19,37 @@ typealias FormSetFormFieldSpec<E> = () -> FormSetFormField<E>
 //
 
 fun <T> field(
-    onValidate: ValidateScope<T?>.() -> Unit = { },
+    validator: Validator<T?> = { },
 ): SingleFormFieldSpec<T?> = {
-    SingleFormField(defaultValue = null, onValidate)
+    SingleFormField(defaultValue = null, validator)
 }
 
 fun <T> field(
     defaultValue: T,
-    onValidate: ValidateScope<T>.() -> Unit = { },
+    validator: Validator<T> = { },
 ): SingleFormFieldSpec<T> = {
-    SingleFormField(defaultValue, onValidate)
+    SingleFormField(defaultValue, validator)
 }
 
 fun <E> fieldList(
     defaultValue: List<E> = emptyList(),
-    onValidate: ValidateScope<List<E>>.() -> Unit = { },
+    validator: Validator<List<E>> = { },
 ): ListFormFieldSpec<E> = {
-    ListFormField(defaultValue, onValidate)
+    ListFormField(defaultValue, validator)
 }
 
 fun <E> fieldSet(
     defaultValue: Set<E> = emptySet(),
-    onValidate: ValidateScope<Set<E>>.() -> Unit = { },
+    validator: Validator<Set<E>> = { },
 ): SetFormFieldSpec<E> = {
-    SetFormField(defaultValue, onValidate)
+    SetFormField(defaultValue, validator)
 }
 
 fun <K, V> fieldMap(
     defaultValue: Map<K, V> = emptyMap(),
-    onValidate: ValidateScope<Map<K, V>>.() -> Unit = { },
+    validator: Validator<Map<K, V>> = { },
 ): MapFormFieldSpec<K, V> = {
-    MapFormField(defaultValue, onValidate)
+    MapFormField(defaultValue, validator)
 }
 
 //
@@ -57,31 +57,31 @@ fun <K, V> fieldMap(
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
 fun <T : Form> fieldForm(
     initialValue: T,
-    onValidate: ValidateScope<T>.() -> Unit = { },
+    validator: Validator<T> = { },
 ): FormSingleFormFieldSpec<T> = {
-    FormSingleFormField(initialValue, onValidate)
+    FormSingleFormField(initialValue, validator)
 }
 
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
 fun <E : Form> fieldFormList(
     initialValue: List<E> = emptyList(),
-    onValidate: ValidateScope<List<E>>.() -> Unit = { },
+    validator: Validator<List<E>> = { },
 ): FormListFormFieldSpec<E> = {
-    FormListFormField(initialValue, onValidate)
+    FormListFormField(initialValue, validator)
 }
 
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
 fun <E : Form> fieldFormSet(
     initialValue: Set<E> = emptySet(),
-    onValidate: ValidateScope<Set<E>>.() -> Unit = { },
+    validator: Validator<Set<E>> = { },
 ): FormSetFormFieldSpec<E> = {
-    FormSetFormField(initialValue, onValidate)
+    FormSetFormField(initialValue, validator)
 }
 
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
 fun <K, V : Form> fieldFormMap(
     initialValue: Map<K, V> = emptyMap(),
-    onValidate: ValidateScope<Map<K, V>>.() -> Unit = { },
+    validator: Validator<Map<K, V>> = { },
 ): FormMapFormFieldSpec<K, V> = {
-    FormMapFormField(initialValue, onValidate)
+    FormMapFormField(initialValue, validator)
 }

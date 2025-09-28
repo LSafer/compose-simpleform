@@ -30,12 +30,12 @@ sealed class FormField<T> {
      *
      * > Can be changed directly.
      */
-    var error by mutableStateOf<String?>(null)
+    var error by mutableStateOf<FormError?>(null)
 
     /**
      * A list of the errors produced by this field and all its subfields (if any).
      */
-    abstract val errors: List<String>
+    abstract val errors: List<FormError>
 
     /**
      * True, when the user changed the current value from the latest one.
