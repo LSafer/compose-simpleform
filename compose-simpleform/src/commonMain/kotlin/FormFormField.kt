@@ -33,7 +33,7 @@ import androidx.compose.runtime.*
  * before adding values directly to [value] and to set it to `false`
  * before updating latest values using [update].
  */
-abstract class FormFormField<T> : FormField<T>()
+sealed class FormFormField<T> : FormField<T>()
 
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
 class FormSingleFormField<T : Form>(

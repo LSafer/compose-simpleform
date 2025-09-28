@@ -2,7 +2,7 @@ package net.lsafer.compose.simpleform
 
 import androidx.compose.runtime.*
 
-abstract class ValueFormField<T>(
+sealed class ValueFormField<T>(
     /**
      * The default value of the field for any entity.
      */
