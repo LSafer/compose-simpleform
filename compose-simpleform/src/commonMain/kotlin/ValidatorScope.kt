@@ -9,7 +9,9 @@ class ValidatorScope<T> internal constructor(
     raise: Raise<FormError>
 ) : Raise<FormError> by raise
 
-typealias Validator<T> = ValidatorScope<T>.() -> Unit
+typealias Validator<T> = context(ValidatorScope<T>) () -> Unit
+
+context(ctx: ValidatorScope<T>) val <T> value: T get() = ctx.value
 
 fun <T> Validator<T>.validate(value: T): FormError? =
     recover({ invoke(ValidatorScope(value, this)); null }, { it })
@@ -18,34 +20,31 @@ fun <T> Validator<T>.isValid(value: T): Boolean =
     recover({ invoke(ValidatorScope(value, this)); true }, { false })
 
 @JvmName("each_Map")
-fun <K, V> ValidatorScope<Map<K, V>>.each(
-    validator: ValidatorScope<V>.(K) -> Unit,
-) {
-    value.forEach { (key, value) ->
+context(ctx: ValidatorScope<Map<K, V>>)
+fun <K, V> each(validator: ValidatorScope<V>.(K) -> Unit) {
+    ctx.value.forEach { (key, value) ->
         recover({ validator(ValidatorScope(value, this), key) }) {
-            raise(FormMapError(key, value, it))
+            ctx.raise(FormMapError(key, value, it))
         }
     }
 }
 
 @JvmName("each_List")
-fun <E> ValidatorScope<List<E>>.each(
-    validator: ValidatorScope<E>.(Int) -> Unit
-) {
-    value.forEachIndexed { index, element ->
+context(ctx: ValidatorScope<List<E>>)
+fun <E> each(validator: ValidatorScope<E>.(Int) -> Unit) {
+    ctx.value.forEachIndexed { index, element ->
         recover({ validator(ValidatorScope(element, this), index) }) {
-            raise(FormListError(index, element, it))
+            ctx.raise(FormListError(index, element, it))
         }
     }
 }
 
+context(ctx: ValidatorScope<Set<E>>)
 @JvmName("each_Set")
-fun <E> ValidatorScope<Set<E>>.each(
-    validator: ValidatorScope<E>.() -> Unit
-) {
-    value.forEach { element ->
+fun <E> each(validator: ValidatorScope<E>.() -> Unit) {
+    ctx.value.forEach { element ->
         recover({ validator(ValidatorScope(element, this)) }) {
-            raise(FormSetError(element, it))
+            ctx.raise(FormSetError(element, it))
         }
     }
 }
