@@ -7,7 +7,7 @@ abstract class ValueFormField<T>(
      * The default value of the field for any entity.
      */
     val defaultValue: T,
-    private val onValidate: ValidateScope.(T) -> Unit = { },
+    private val onValidate: ValidateScope<T>.() -> Unit = { },
 ) : FormField<T>() {
     override var latestValue by mutableStateOf(defaultValue)
         private set
@@ -16,11 +16,10 @@ abstract class ValueFormField<T>(
         listOfNotNull(error)
     }
 
-    private val _isValidValidationScope = ValidateScope() // this is to prevent gc
     override val isValid by derivedStateOf {
-        onValidate(_isValidValidationScope, value)
-        val isValid = _isValidValidationScope.error == null
-        _isValidValidationScope.error = null
+        val scope = ValidateScope(value)
+        onValidate(scope)
+        val isValid = scope.error == null
         isValid
     }
 
@@ -44,15 +43,15 @@ abstract class ValueFormField<T>(
 
     override fun validate() {
         // No need to cache scope object here, this is only invoked on focus loss.
-        val scope = ValidateScope()
-        scope.apply { onValidate(value) }
+        val scope = ValidateScope(value)
+        onValidate(scope)
         error = scope.error
     }
 }
 
 class SingleFormField<T>(
     defaultValue: T,
-    onValidate: ValidateScope.(T) -> Unit = { },
+    onValidate: ValidateScope<T>.() -> Unit = { },
 ) : ValueFormField<T>(defaultValue, onValidate) {
     override var value by mutableStateOf(defaultValue)
     override val isDirty by derivedStateOf { value != latestValue }
@@ -64,7 +63,7 @@ class SingleFormField<T>(
 
 class MapFormField<K, V>(
     defaultValue: Map<K, V>,
-    onValidate: ValidateScope.(Map<K, V>) -> Unit = { },
+    onValidate: ValidateScope<Map<K, V>>.() -> Unit = { },
 ) : ValueFormField<Map<K, V>>(defaultValue, onValidate) {
     override val value = mutableStateMapOf<K, V>().also { it.putAll(defaultValue) }
     override val isDirty by derivedStateOf { value.toMap() != latestValue }
@@ -77,7 +76,7 @@ class MapFormField<K, V>(
 
 class ListFormField<E>(
     defaultValue: List<E>,
-    onValidate: ValidateScope.(List<E>) -> Unit = { },
+    onValidate: ValidateScope<List<E>>.() -> Unit = { },
 ) : ValueFormField<List<E>>(defaultValue, onValidate) {
     override val value = mutableStateListOf<E>().also { it.addAll(defaultValue) }
     override val isDirty by derivedStateOf { value.toList() != latestValue }
@@ -90,7 +89,7 @@ class ListFormField<E>(
 
 class SetFormField<E>(
     defaultValue: Set<E>,
-    onValidate: ValidateScope.(Set<E>) -> Unit = { },
+    onValidate: ValidateScope<Set<E>>.() -> Unit = { },
 ) : ValueFormField<Set<E>>(defaultValue, onValidate) {
     override val value = mutableStateSetOf<E>().also { it.addAll(defaultValue) }
     override val isDirty by derivedStateOf { value.toSet() != latestValue }
