@@ -33,5 +33,5 @@ class ActionState {
 
 context(vm: ViewModel)
 fun ActionState.useIO(block: suspend CoroutineScope.() -> Unit): Job {
-    return vm.viewModelScope.launch(platformIODispatcher) { use(block) }
+    return vm.viewModelScope.launch { use(block) }
 }

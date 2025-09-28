@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 
 class FormAction(
     private val coroutineScope: CoroutineScope,
@@ -39,4 +38,4 @@ class FormAction(
 
 context(vm: ViewModel)
 fun FormAction(condition: () -> Boolean = { true }, block: suspend CoroutineScope.() -> Unit) =
-    FormAction(vm.viewModelScope + platformIODispatcher, condition, block)
+    FormAction(vm.viewModelScope, condition, block)
