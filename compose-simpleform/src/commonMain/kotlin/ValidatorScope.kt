@@ -1,9 +1,11 @@
 package net.lsafer.compose.simpleform
 
 import arrow.core.raise.Raise
+import arrow.core.raise.RaiseDSL
 import arrow.core.raise.recover
 import kotlin.jvm.JvmName
 
+@RaiseDSL
 class ValidatorScope<T> internal constructor(
     val value: T,
     raise: Raise<FormError>
