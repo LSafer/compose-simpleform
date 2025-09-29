@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    `maven-publish`
+    alias(libs.plugins.vanniktech.mavenPublish)
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.compose)
@@ -11,7 +11,6 @@ plugins {
 }
 
 group = "net.lsafer.compose-simpleform"
-version = "local_snapshot"
 
 kotlin {
     androidTarget {
@@ -82,5 +81,40 @@ android {
     }
     dependencies {
         debugImplementation(compose.uiTooling)
+    }
+}
+
+mavenPublishing {
+    publishToMavenCentral()
+    signAllPublications()
+    coordinates(
+        groupId = group.toString(),
+        artifactId = "compose-simpleform",
+        version = version.toString(),
+    )
+    pom {
+        name = "Compose SimpleForm"
+        description = "Form state management library for Compose Multiplatform"
+        inceptionYear = "2025"
+        url = "https://github.com/LSafer/compose-simpleform/"
+        licenses {
+            license {
+                name = "The Apache License, Version 2.0"
+                url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                distribution = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+            }
+        }
+        developers {
+            developer {
+                id = "LSafer"
+                name = "Sulaiman Oboody"
+                url = "https://github.com/LSafer/"
+            }
+        }
+        scm {
+            url = "https://github.com/LSafer/compose-simpleform/"
+            connection = "scm:git:git://github.com/LSafer/compose-simpleform.git"
+            developerConnection = "scm:git:ssh://git@github.com/LSafer/compose-simpleform.git"
+        }
     }
 }
