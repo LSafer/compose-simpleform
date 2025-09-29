@@ -67,7 +67,7 @@ class MapFormField<K, V>(
 
     override fun setValue0(newValue: Map<K, V>) {
         value.clear()
-        value.putAll(defaultValue)
+        value.putAll(newValue)
     }
 
     override fun validate() {
@@ -88,7 +88,7 @@ class ListFormField<E>(
 
     override fun setValue0(newValue: List<E>) {
         value.clear()
-        value.addAll(defaultValue)
+        value.addAll(newValue)
     }
 
     override fun validate() {
@@ -109,7 +109,7 @@ class SetFormField<E>(
 
     override fun setValue0(newValue: Set<E>) {
         value.clear()
-        value.addAll(defaultValue)
+        value.addAll(newValue)
     }
 
     override fun validate() {
