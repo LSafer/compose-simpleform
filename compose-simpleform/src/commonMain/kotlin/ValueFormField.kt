@@ -94,6 +94,9 @@ class ListFormField<E>(
     override fun validate() {
         error = validator.validate(value.toList())
     }
+
+    fun update(newValue: Iterable<E>) =
+        update(newValue.toList())
 }
 
 class SetFormField<E>(
@@ -115,4 +118,7 @@ class SetFormField<E>(
     override fun validate() {
         error = validator.validate(value.toSet())
     }
+
+    fun update(newValue: Iterable<E>) =
+        update(newValue.toSet())
 }

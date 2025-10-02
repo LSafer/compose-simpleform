@@ -163,6 +163,9 @@ class FormListFormField<E : Form>(
         error = validator.validate(value.toList())
         value.forEach { it.validate() }
     }
+
+    fun update(newValue: Iterable<E>) =
+        update(newValue.toList())
 }
 
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
@@ -209,4 +212,7 @@ class FormSetFormField<E : Form>(
         error = validator.validate(value.toSet())
         value.forEach { it.validate() }
     }
+
+    fun update(newValue: Iterable<E>) =
+        update(newValue.toSet())
 }
