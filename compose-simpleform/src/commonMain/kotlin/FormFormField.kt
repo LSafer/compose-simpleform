@@ -44,6 +44,8 @@ class FormSingleFormField<T : Form>(
     override var latestValue by mutableStateOf(initialValue)
         private set
 
+    override val isClear get() = value.isClear
+
     override val isDirty by derivedStateOf { value.isDirty }
     override val errors by derivedStateOf { listOfNotNull(error) + value.errors }
 
@@ -80,6 +82,8 @@ class FormMapFormField<K, V : Form>(
     override val value = mutableStateMapOf<K, V>().also { it.putAll(initialValue) }
     override var latestValue by mutableStateOf(initialValue)
         private set
+
+    override val isClear get() = value.isEmpty()
 
     override val isDirty by derivedStateOf {
         value.toMap() != latestValue || value.values.any { it.isDirty }
@@ -127,6 +131,8 @@ class FormListFormField<E : Form>(
     override val value = mutableStateListOf<E>().also { it.addAll(initialValue) }
     override var latestValue by mutableStateOf(initialValue)
         private set
+
+    override val isClear get() = value.isEmpty()
 
     override val isDirty by derivedStateOf {
         value.toList() != latestValue || value.any { it.isDirty }
@@ -176,6 +182,8 @@ class FormSetFormField<E : Form>(
     override val value = mutableStateSetOf<E>().also { it.addAll(initialValue) }
     override var latestValue by mutableStateOf(initialValue)
         private set
+
+    override val isClear get() = value.isEmpty()
 
     override val isDirty by derivedStateOf {
         value.toSet() != latestValue || value.any { it.isDirty }

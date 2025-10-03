@@ -40,6 +40,15 @@ abstract class Form(isDraft: Boolean = false) {
     }
 
     /**
+     * True, if all the fields in this form are set to their default values.
+     */
+    val isClear by derivedStateOf {
+        _fields.fold(true) { result, field ->
+            field.isClear && result
+        }
+    }
+
+    /**
      * True, indicating that at least one field has changed from latest value.
      *
      * > UI logic should ignore this when [isDraft] is true.

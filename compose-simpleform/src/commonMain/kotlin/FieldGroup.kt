@@ -10,6 +10,11 @@ class FieldGroup(val fields: List<FormField<*>>) {
     val errors by derivedStateOf {
         fields.flatMap { it.errors }
     }
+    val isClear by derivedStateOf {
+        fields.fold(true) { result, field ->
+            field.isClear && result
+        }
+    }
     val isDirty by derivedStateOf {
         fields.fold(false) { result, field ->
             field.isDirty || result

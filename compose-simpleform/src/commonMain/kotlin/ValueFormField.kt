@@ -39,6 +39,7 @@ class SingleFormField<T>(
     private val validator: Validator<T> = { },
 ) : ValueFormField<T>(defaultValue) {
     override var value by mutableStateOf(defaultValue)
+    override val isClear by derivedStateOf { value == defaultValue }
     override val isDirty by derivedStateOf { value != latestValue }
 
     override val isValid by derivedStateOf {
@@ -59,6 +60,7 @@ class MapFormField<K, V>(
     private val validator: Validator<Map<K, V>> = { },
 ) : ValueFormField<Map<K, V>>(defaultValue) {
     override val value = mutableStateMapOf<K, V>().also { it.putAll(defaultValue) }
+    override val isClear by derivedStateOf { value.toMap() == defaultValue }
     override val isDirty by derivedStateOf { value.toMap() != latestValue }
 
     override val isValid by derivedStateOf {
@@ -80,6 +82,7 @@ class ListFormField<E>(
     private val validator: Validator<List<E>> = { },
 ) : ValueFormField<List<E>>(defaultValue) {
     override val value = mutableStateListOf<E>().also { it.addAll(defaultValue) }
+    override val isClear by derivedStateOf { value.toList() == defaultValue }
     override val isDirty by derivedStateOf { value.toList() != latestValue }
 
     override val isValid by derivedStateOf {
@@ -104,6 +107,7 @@ class SetFormField<E>(
     private val validator: Validator<Set<E>> = { },
 ) : ValueFormField<Set<E>>(defaultValue) {
     override val value = mutableStateSetOf<E>().also { it.addAll(defaultValue) }
+    override val isClear by derivedStateOf { value.toSet() == defaultValue }
     override val isDirty by derivedStateOf { value.toSet() != latestValue }
 
     override val isValid by derivedStateOf {

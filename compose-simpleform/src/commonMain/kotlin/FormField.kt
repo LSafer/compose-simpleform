@@ -38,6 +38,11 @@ sealed class FormField<T> {
     abstract val errors: List<FormError>
 
     /**
+     * True, if [value] is set to the default value.
+     */
+    abstract val isClear: Boolean
+
+    /**
      * True, when the user changed the current value from the latest one.
      *
      * > UI logic should ignore this when [Form.isDraft] is true.
