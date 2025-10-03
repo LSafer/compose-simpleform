@@ -46,6 +46,8 @@ class SingleFormField<T>(
         validator.isValid(value)
     }
 
+    override fun get() = value
+
     override fun setValue0(newValue: T) {
         value = newValue
     }
@@ -66,6 +68,8 @@ class MapFormField<K, V>(
     override val isValid by derivedStateOf {
         validator.isValid(value.toMap())
     }
+
+    override fun get() = value.toMap()
 
     override fun setValue0(newValue: Map<K, V>) {
         value.clear()
@@ -88,6 +92,8 @@ class ListFormField<E>(
     override val isValid by derivedStateOf {
         validator.isValid(value.toList())
     }
+
+    override fun get() = value.toList()
 
     override fun setValue0(newValue: List<E>) {
         value.clear()
@@ -113,6 +119,8 @@ class SetFormField<E>(
     override val isValid by derivedStateOf {
         validator.isValid(value.toSet())
     }
+
+    override fun get() = value.toSet()
 
     override fun setValue0(newValue: Set<E>) {
         value.clear()

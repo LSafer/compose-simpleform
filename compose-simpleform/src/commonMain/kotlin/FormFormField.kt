@@ -53,6 +53,8 @@ class FormSingleFormField<T : Form>(
         validator.isValid(value) && value.isValid
     }
 
+    override fun get() = value
+
     override fun clear() {
         error = null
         value.clear()
@@ -96,6 +98,8 @@ class FormMapFormField<K, V : Form>(
         validator.isValid(value.toMap()) &&
                 value.values.all { it.isValid }
     }
+
+    override fun get() = value.toMap()
 
     override fun clear() {
         error = null
@@ -145,6 +149,8 @@ class FormListFormField<E : Form>(
         validator.isValid(value.toList()) &&
                 value.all { it.isValid }
     }
+
+    override fun get() = value.toList()
 
     override fun clear() {
         error = null
@@ -196,6 +202,8 @@ class FormSetFormField<E : Form>(
         validator.isValid(value.toSet()) &&
                 value.all { it.isValid }
     }
+
+    override fun get() = value.toSet()
 
     override fun clear() {
         error = null

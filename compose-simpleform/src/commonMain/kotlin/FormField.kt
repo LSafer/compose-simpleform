@@ -67,6 +67,11 @@ sealed class FormField<T> {
     val next by derivedStateOf { form.fields.getOrNull(index + 1) }
 
     /**
+     * Return non-mutable-state instance of [value].
+     */
+    abstract fun get(): T
+
+    /**
      * Change field value to default one.
      */
     abstract fun clear()
