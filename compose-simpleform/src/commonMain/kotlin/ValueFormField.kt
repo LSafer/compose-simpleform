@@ -34,7 +34,7 @@ sealed class ValueFormField<T>(
     }
 }
 
-class SingleFormField<T>(
+class ValueSingleFormField<T>(
     defaultValue: T,
     private val validator: Validator<T> = { },
 ) : ValueFormField<T>(defaultValue) {
@@ -57,7 +57,7 @@ class SingleFormField<T>(
     }
 }
 
-class MapFormField<K, V>(
+class ValueMapFormField<K, V>(
     defaultValue: Map<K, V>,
     private val validator: Validator<Map<K, V>> = { },
 ) : ValueFormField<Map<K, V>>(defaultValue) {
@@ -81,7 +81,7 @@ class MapFormField<K, V>(
     }
 }
 
-class ListFormField<E>(
+class ValueListFormField<E>(
     defaultValue: List<E>,
     private val validator: Validator<List<E>> = { },
 ) : ValueFormField<List<E>>(defaultValue) {
@@ -108,7 +108,7 @@ class ListFormField<E>(
         update(newValue.toList())
 }
 
-class SetFormField<E>(
+class ValueSetFormField<E>(
     defaultValue: Set<E>,
     private val validator: Validator<Set<E>> = { },
 ) : ValueFormField<Set<E>>(defaultValue) {
