@@ -20,6 +20,8 @@ abstract class Form(isDraft: Boolean = false) {
         property: KProperty<*>
     ): ReadOnlyProperty<Form, S> {
         val field = this()
+        @Suppress("UNCHECKED_CAST")
+        field as AbstractFormField<T>
         field.form = this@Form
         _fields.add(field)
         return ReadOnlyProperty { _, _ -> field }

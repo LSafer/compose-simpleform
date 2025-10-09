@@ -7,7 +7,7 @@ sealed class ValueFormField<T>(
      * The default value of the field for any entity.
      */
     val defaultValue: T,
-) : FormField<T>() {
+) : AbstractFormField<T>() {
     override var latestValue by mutableStateOf(defaultValue)
         private set
 
@@ -37,7 +37,7 @@ sealed class ValueFormField<T>(
 class ValueSingleFormField<T>(
     defaultValue: T,
     private val validator: Validator<T> = { },
-) : ValueFormField<T>(defaultValue) {
+) : ValueFormField<T>(defaultValue), SingleFormField<T> {
     override var value by mutableStateOf(defaultValue)
     override val isClear by derivedStateOf { value == defaultValue }
     override val isDirty by derivedStateOf { value != latestValue }
@@ -60,7 +60,7 @@ class ValueSingleFormField<T>(
 class ValueMapFormField<K, V>(
     defaultValue: Map<K, V>,
     private val validator: Validator<Map<K, V>> = { },
-) : ValueFormField<Map<K, V>>(defaultValue) {
+) : ValueFormField<Map<K, V>>(defaultValue), MapFormField<K, V> {
     override val value = mutableStateMapOf<K, V>().also { it.putAll(defaultValue) }
     override val isClear by derivedStateOf { value.toMap() == defaultValue }
     override val isDirty by derivedStateOf { value.toMap() != latestValue }
@@ -84,7 +84,7 @@ class ValueMapFormField<K, V>(
 class ValueListFormField<E>(
     defaultValue: List<E>,
     private val validator: Validator<List<E>> = { },
-) : ValueFormField<List<E>>(defaultValue) {
+) : ValueFormField<List<E>>(defaultValue), ListFormField<E> {
     override val value = mutableStateListOf<E>().also { it.addAll(defaultValue) }
     override val isClear by derivedStateOf { value.toList() == defaultValue }
     override val isDirty by derivedStateOf { value.toList() != latestValue }
@@ -111,7 +111,7 @@ class ValueListFormField<E>(
 class ValueSetFormField<E>(
     defaultValue: Set<E>,
     private val validator: Validator<Set<E>> = { },
-) : ValueFormField<Set<E>>(defaultValue) {
+) : ValueFormField<Set<E>>(defaultValue), SetFormField<E> {
     override val value = mutableStateSetOf<E>().also { it.addAll(defaultValue) }
     override val isClear by derivedStateOf { value.toSet() == defaultValue }
     override val isDirty by derivedStateOf { value.toSet() != latestValue }

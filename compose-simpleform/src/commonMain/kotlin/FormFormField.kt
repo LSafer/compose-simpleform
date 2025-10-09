@@ -33,13 +33,13 @@ import androidx.compose.runtime.*
  * before adding values directly to [value] and to set it to `false`
  * before updating latest values using [update].
  */
-sealed class FormFormField<T> : FormField<T>()
+sealed class FormFormField<T> : AbstractFormField<T>()
 
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
 class FormSingleFormField<T : Form>(
     initialValue: T,
     private val validator: Validator<T> = { },
-) : FormFormField<T>() {
+) : FormFormField<T>(), SingleFormField<T> {
     override var value by mutableStateOf(initialValue)
     override var latestValue by mutableStateOf(initialValue)
         private set
@@ -80,7 +80,7 @@ class FormSingleFormField<T : Form>(
 class FormMapFormField<K, V : Form>(
     initialValue: Map<K, V>,
     private val validator: Validator<Map<K, V>> = { },
-) : FormFormField<Map<K, V>>() {
+) : FormFormField<Map<K, V>>(), MapFormField<K, V> {
     override val value = mutableStateMapOf<K, V>().also { it.putAll(initialValue) }
     override var latestValue by mutableStateOf(initialValue)
         private set
@@ -131,7 +131,7 @@ class FormMapFormField<K, V : Form>(
 class FormListFormField<E : Form>(
     initialValue: List<E>,
     private val validator: Validator<List<E>> = { },
-) : FormFormField<List<E>>() {
+) : FormFormField<List<E>>(), ListFormField<E> {
     override val value = mutableStateListOf<E>().also { it.addAll(initialValue) }
     override var latestValue by mutableStateOf(initialValue)
         private set
@@ -184,7 +184,7 @@ class FormListFormField<E : Form>(
 class FormSetFormField<E : Form>(
     initialValue: Set<E>,
     private val validator: Validator<Set<E>> = { },
-) : FormFormField<Set<E>>() {
+) : FormFormField<Set<E>>(), SetFormField<E> {
     override val value = mutableStateSetOf<E>().also { it.addAll(initialValue) }
     override var latestValue by mutableStateOf(initialValue)
         private set

@@ -4,50 +4,52 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.compose.runtime.snapshots.SnapshotStateSet
 import androidx.compose.ui.focus.FocusRequester
 
-sealed class FormField<T> {
+sealed interface FormField<T> {
     /**
      * The form this field belongs/bound to.
      */
-    lateinit var form: Form
-        internal set
+    val form: Form
 
     /**
      * The current value of the field. Mutated by the user.
      */
-    abstract val value: T
+    val value: T
 
     /**
      * The actual value the entity is currently having.
      *
      * > Can be changed via [update]
      */
-    abstract val latestValue: T
+    val latestValue: T
 
     /**
      * The current validation or api error of the field.
      *
      * > Can be changed directly.
      */
-    var error by mutableStateOf<FormError?>(null)
+    var error: FormError?
 
     /**
      * A list of the errors produced by this field and all its subfields (if any).
      */
-    abstract val errors: List<FormError>
+    val errors: List<FormError>
 
     /**
      * True, if [value] is set to the default value.
      */
-    abstract val isClear: Boolean
+    val isClear: Boolean
 
     /**
      * True, when the user changed the current value from the latest one.
      *
      * > UI logic should ignore this when [Form.isDraft] is true.
      */
-    abstract val isDirty: Boolean
+    val isDirty: Boolean
 
     /**
      * True, if [value] is valid according to field validation logic.
@@ -55,41 +57,69 @@ sealed class FormField<T> {
      * > This is decoupled from [validate] and will respond to every value change.
      * > Field UI should use [error] instead.
      */
-    abstract val isValid: Boolean
+    val isValid: Boolean
 
     /**
      * The focus requester set to the UI component.
      */
-    val focus = FocusRequester()
+    val focus: FocusRequester
 
-    val index by derivedStateOf { form.fields.indexOf(this) }
-    val previous by derivedStateOf { form.fields.getOrNull(index - 1) }
-    val next by derivedStateOf { form.fields.getOrNull(index + 1) }
+    val index: Int
+    val previous: FormField<*>?
+    val next: FormField<*>?
 
     /**
      * Return non-mutable-state instance of [value].
      */
-    abstract fun get(): T
+    fun get(): T
 
     /**
      * Change field value to default one.
      */
-    abstract fun clear()
+    fun clear()
 
     /**
      * Change field value to latest one.
      */
-    abstract fun reset()
+    fun reset()
 
     /**
      * Update latest field value to [newValue].
      */
-    abstract fun update(newValue: T)
+    fun update(newValue: T)
 
     /**
      * Run validation. This should be invoked when field loses focus.
      *
      * > This is to populate [error] with validation error and NOT for [isValid].
      */
-    abstract fun validate()
+    fun validate()
+}
+
+sealed interface SingleFormField<T> : FormField<T> {
+    override var value: T
+}
+
+sealed interface MapFormField<K, V> : FormField<Map<K, V>> {
+    override val value: SnapshotStateMap<K, V>
+}
+
+sealed interface ListFormField<E> : FormField<List<E>> {
+    override val value: SnapshotStateList<E>
+}
+
+sealed interface SetFormField<E> : FormField<Set<E>> {
+    override val value: SnapshotStateSet<E>
+}
+
+sealed class AbstractFormField<T> : FormField<T> {
+    override lateinit var form: Form
+        internal set
+
+    override var error by mutableStateOf<FormError?>(null)
+    override val focus = FocusRequester()
+
+    override val index by derivedStateOf { form.fields.indexOf(this) }
+    override val previous by derivedStateOf { form.fields.getOrNull(index - 1) }
+    override val next by derivedStateOf { form.fields.getOrNull(index + 1) }
 }

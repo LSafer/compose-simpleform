@@ -2,6 +2,11 @@ package net.lsafer.compose.simpleform
 
 typealias FormFieldSpec<T> = () -> FormField<T>
 
+typealias SingleFormFieldSpec<T> = () -> SingleFormField<T>
+typealias MapFormFieldSpec<K, V> = () -> MapFormField<K, V>
+typealias ListFormFieldSpec<E> = () -> ListFormField<E>
+typealias SetFormFieldSpec<E> = () -> SetFormField<E>
+
 typealias ValueSingleFormFieldSpec<T> = () -> ValueSingleFormField<T>
 typealias ValueMapFormFieldSpec<K, V> = () -> ValueMapFormField<K, V>
 typealias ValueListFormFieldSpec<E> = () -> ValueListFormField<E>
