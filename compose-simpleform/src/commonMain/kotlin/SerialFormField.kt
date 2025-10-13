@@ -4,8 +4,8 @@ sealed class SerialFormField<T, O, F : FormField<T>> : FormField<T> {
     abstract val original: F
     abstract val codec: FormCodec<T, O, F>
 
-    fun collect(): O = codec.get(original)
-    fun accept(newValue: O) = codec.update(original, newValue)
+    fun collect(): O = codec.collect(original)
+    fun accept(newValue: O) = codec.accept(original, newValue)
 }
 
 /** WARNING: This is still experimental */

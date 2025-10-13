@@ -7,8 +7,8 @@ import kotlin.jvm.JvmName
 
 /** WARNING: This is still experimental */
 interface FormCodec<T, O, in F : FormField<T>> {
-    fun get(field: F): O
-    fun update(field: F, newValue: O)
+    fun collect(field: F): O
+    fun accept(field: F, newValue: O)
 }
 
 /** WARNING: This is still experimental */
@@ -24,38 +24,38 @@ typealias SetFormCodec<E, O> = FormCodec<Set<E>, O, SetFormField<E>>
 
 /** WARNING: This is still experimental */
 inline fun <T, O, F : FormField<T>> FormCodec(
-    crossinline get: (F) -> O,
-    crossinline update: (F, newValue: O) -> Unit,
+    crossinline collect: (F) -> O,
+    crossinline accept: (F, newValue: O) -> Unit,
 ): FormCodec<T, O, F> {
     return object : FormCodec<T, O, F> {
-        override fun get(field: F): O = get(field)
-        override fun update(field: F, newValue: O) = update(field, newValue)
+        override fun collect(field: F): O = collect(field)
+        override fun accept(field: F, newValue: O) = accept(field, newValue)
     }
 }
 
 /** WARNING: This is still experimental */
 inline fun <T, O> SingleFormCodec(
-    crossinline get: (SingleFormField<T>) -> O,
-    crossinline update: (SingleFormField<T>, newValue: O) -> Unit,
-): SingleFormCodec<T, O> = FormCodec(get, update)
+    crossinline collect: (SingleFormField<T>) -> O,
+    crossinline accept: (SingleFormField<T>, newValue: O) -> Unit,
+): SingleFormCodec<T, O> = FormCodec(collect, accept)
 
 /** WARNING: This is still experimental */
 inline fun <K, V, O> MapFormCodec(
-    crossinline get: (MapFormField<K, V>) -> O,
-    crossinline update: (MapFormField<K, V>, newValue: O) -> Unit,
-): MapFormCodec<K, V, O> = FormCodec(get, update)
+    crossinline collect: (MapFormField<K, V>) -> O,
+    crossinline accept: (MapFormField<K, V>, newValue: O) -> Unit,
+): MapFormCodec<K, V, O> = FormCodec(collect, accept)
 
 /** WARNING: This is still experimental */
 inline fun <E, O> ListFormCodec(
-    crossinline get: (ListFormField<E>) -> O,
-    crossinline update: (ListFormField<E>, newValue: O) -> Unit,
-): ListFormCodec<E, O> = FormCodec(get, update)
+    crossinline collect: (ListFormField<E>) -> O,
+    crossinline accept: (ListFormField<E>, newValue: O) -> Unit,
+): ListFormCodec<E, O> = FormCodec(collect, accept)
 
 /** WARNING: This is still experimental */
 inline fun <E, O> SetFormCodec(
-    crossinline get: (SetFormField<E>) -> O,
-    crossinline update: (SetFormField<E>, newValue: O) -> Unit,
-): SetFormCodec<E, O> = FormCodec(get, update)
+    crossinline collect: (SetFormField<E>) -> O,
+    crossinline accept: (SetFormField<E>, newValue: O) -> Unit,
+): SetFormCodec<E, O> = FormCodec(collect, accept)
 
 // =============== Builtin Merging Codecs =============== //
 
@@ -66,8 +66,8 @@ inline fun <T, O> SingleFormCodec(
     crossinline merge: (T, O) -> T,
 ): SingleFormCodec<T, O> {
     return SingleFormCodec(
-        get = { field -> encode(field.get()) },
-        update = { field, newValue ->
+        collect = { field -> encode(field.get()) },
+        accept = { field, newValue ->
             val currentValue = field.get()
             val result = merge(currentValue, newValue)
 
@@ -86,8 +86,8 @@ fun <K, V, Ko, Vo> MapFormCodec(
     merge: (V, Vo) -> V,
 ): MapFormCodec<K, V, Map<Ko, Vo>> {
     return MapFormCodec(
-        get = { field -> encode(field.get()) },
-        update = { field, newValue ->
+        collect = { field -> encode(field.get()) },
+        accept = { field, newValue ->
             val currentValue = field.value.toMap()
             val result = mergeMap(
                 origin = currentValue,
@@ -111,8 +111,8 @@ fun <E, Eo> ListFormCodec(
     merge: (E, Eo) -> E,
 ): ListFormCodec<E, List<Eo>> {
     return ListFormCodec(
-        get = { field -> encode(field.get()) },
-        update = { field, newValue ->
+        collect = { field -> encode(field.get()) },
+        accept = { field, newValue ->
             val currentValue = field.value.toList()
             val result = mergeList(
                 origin = currentValue,
@@ -136,8 +136,8 @@ fun <E, Eo> SetFormCodec(
     merge: (E, Eo) -> E,
 ): SetFormCodec<E, Set<Eo>> {
     return SetFormCodec(
-        get = { field -> encode(field.get()) },
-        update = { field, newValue ->
+        collect = { field -> encode(field.get()) },
+        accept = { field, newValue ->
             val currentValue = field.value.toSet()
             val result = mergeSet(
                 origin = currentValue,
