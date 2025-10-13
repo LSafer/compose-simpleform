@@ -5,7 +5,7 @@ internal fun <K, V, Ko, Vo> mergeMap(
     update: Map<Ko, Vo>,
     decodeKey: (Ko) -> K,
     decodeValue: (Vo) -> V,
-    merge: (K, V, Vo) -> V,
+    merge: (V, Vo) -> V,
 ): Map<K, V> {
     val result = origin.toMutableMap()
     val toRemoveList = origin.keys.toMutableSet()
@@ -21,7 +21,7 @@ internal fun <K, V, Ko, Vo> mergeMap(
             // compute current item with new item
             @Suppress("UNCHECKED_CAST")
             val originV = origin[updateK] as V
-            val computedV = merge(updateK, originV, updateVo)
+            val computedV = merge(originV, updateVo)
 
             // add to result; ignore if merged in-place
             if (originV != computedV)
