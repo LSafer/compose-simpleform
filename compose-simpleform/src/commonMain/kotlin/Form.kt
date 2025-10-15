@@ -1,38 +1,47 @@
 package net.lsafer.compose.simpleform
 
 import androidx.compose.runtime.*
-import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
+import net.lsafer.compose.simpleform.internal.ensureSafeToBindTo
+import net.lsafer.compose.simpleform.internal.resolve
 
 abstract class Form(isDraft: Boolean = false) {
-    private val _fields = mutableStateListOf<FormField<*>>()
-
+    private val _fields = mutableStateListOf<AbstractFormField<*>>()
     val fields: List<FormField<*>> get() = _fields
 
-    protected fun group(vararg fields: FormField<*>): FieldGroup {
-        val group = FieldGroup(fields.toList())
-        group.form = this
-        return group
+    /**
+     * Bind given [field] to this form.
+     *
+     * @throws IllegalStateException if already bound to a different form.
+     */
+    @DelicateSimpleFormApi
+    fun bind(field: FormField<*>) {
+        val base = field.resolve()
+        if (base !in _fields) {
+            base.ensureSafeToBindTo(this)
+            base.form = this
+            _fields.add(base)
+        }
     }
 
-    protected operator fun <T, F : FormField<T>> F.provideDelegate(
-        thisRef: Form,
-        property: KProperty<*>
-    ): ReadOnlyProperty<Form, F> {
-        val field = this
-        field.onBind(this@Form)
-        _fields.add(field)
-        return ReadOnlyProperty { _, _ -> field }
-    }
-
-    protected operator fun <T : Form> T.provideDelegate(
-        thisRef: Form,
-        property: KProperty<*>
-    ): ReadOnlyProperty<Form, T> {
-        val field = FormSingleFormField(this)
-        field.onBind(this@Form)
-        _fields.add(field)
-        return ReadOnlyProperty { _, _ -> field.value }
+    /**
+     * Bind given [fields] to this form.
+     *
+     * > function follows all-or-nothing fail policy.
+     *
+     * @throws IllegalStateException if already bound to a different form.
+     */
+    @DelicateSimpleFormApi
+    fun bind(fields: List<FormField<*>>) {
+        val baseList = fields
+            .map { it.resolve() }
+            .filter { it !in _fields }
+        for (base in baseList) {
+            base.ensureSafeToBindTo(this)
+        }
+        for (base in baseList) {
+            base.form = this
+            _fields.add(base)
+        }
     }
 
     /**
