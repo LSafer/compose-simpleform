@@ -116,6 +116,8 @@ sealed class AbstractFormField<T> : FormField<T> {
     override lateinit var form: Form
         internal set
 
+    internal val formIsInitialized = ::form.isInitialized
+
     override var error by mutableStateOf<FormError?>(null)
     override val focus = FocusRequester()
 

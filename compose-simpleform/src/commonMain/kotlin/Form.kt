@@ -15,11 +15,11 @@ abstract class Form(isDraft: Boolean = false) {
         return group
     }
 
-    protected operator fun <T, S : FormField<T>> (() -> S).provideDelegate(
+    protected operator fun <T, F : FormField<T>> F.provideDelegate(
         thisRef: Form,
         property: KProperty<*>
-    ): ReadOnlyProperty<Form, S> {
-        val field = this()
+    ): ReadOnlyProperty<Form, F> {
+        val field = this
         field.onBind(this@Form)
         _fields.add(field)
         return ReadOnlyProperty { _, _ -> field }
@@ -32,7 +32,7 @@ abstract class Form(isDraft: Boolean = false) {
         val field = FormSingleFormField(this)
         field.onBind(this@Form)
         _fields.add(field)
-        return ReadOnlyProperty { _, _ -> this }
+        return ReadOnlyProperty { _, _ -> field.value }
     }
 
     /**
