@@ -25,6 +25,16 @@ abstract class Form(isDraft: Boolean = false) {
         return ReadOnlyProperty { _, _ -> field }
     }
 
+    protected operator fun <T : Form> T.provideDelegate(
+        thisRef: Form,
+        property: KProperty<*>
+    ): ReadOnlyProperty<Form, T> {
+        val field = FormSingleFormField(this)
+        field.onBind(this@Form)
+        _fields.add(field)
+        return ReadOnlyProperty { _, _ -> this }
+    }
+
     /**
      * True, indicating that the form is for creating an entity.
      *
