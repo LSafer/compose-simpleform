@@ -55,15 +55,17 @@ abstract class Form(isDraft: Boolean = false) {
      * A list of all error messages of fields.
      */
     val errors by derivedStateOf {
-        _fields.flatMap { it.errors }
+        _fields.flatMap { f ->
+            f.errors.map { FormFormError(f, it) }
+        }
     }
 
     /**
      * True, if all the fields in this form are set to their default values.
      */
     val isClear by derivedStateOf {
-        _fields.fold(true) { result, field ->
-            field.isClear && result
+        _fields.fold(true) { r, f ->
+            f.isClear && r
         }
     }
 
@@ -73,8 +75,8 @@ abstract class Form(isDraft: Boolean = false) {
      * > UI logic should ignore this when [isDraft] is true.
      */
     val isDirty by derivedStateOf {
-        _fields.fold(false) { result, field ->
-            field.isDirty || result
+        _fields.fold(false) { r, f ->
+            f.isDirty || r
         }
     }
 
@@ -82,8 +84,8 @@ abstract class Form(isDraft: Boolean = false) {
      * True, indicating that all fields validation passed.
      */
     val isValid by derivedStateOf {
-        _fields.fold(true) { result, field ->
-            field.isValid && result
+        _fields.fold(true) { r, f ->
+            f.isValid && r
         }
     }
 

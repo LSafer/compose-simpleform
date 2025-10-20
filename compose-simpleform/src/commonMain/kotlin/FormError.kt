@@ -19,6 +19,11 @@ open class FormSetError(
     val error: FormError,
 ) : FormError(error.message)
 
+open class FormFormError(
+    val field: FormField<*>,
+    val error: FormError,
+) : FormError(error.message)
+
 val FormError.asMapOrNull get() = this as? FormMapError
 val FormError.mapKeyOrNull get() = asMapOrNull?.key
 val FormError.mapValueOrNull get() = asMapOrNull?.value
@@ -30,11 +35,24 @@ val FormError.listElementOrNull get() = asListOrNull?.element
 val FormError.asSetOrNull get() = this as? FormSetError
 val FormError.setElementOrNull get() = asSetOrNull?.element
 
+val FormError.asFormOrNull get() = this as? FormFormError
+val FormError.formFieldOrNull get() = asFormOrNull?.field
+
+val FormError.isRoot: Boolean
+    get() = when (this) {
+        is FormMapError -> false
+        is FormListError -> false
+        is FormSetError -> false
+        is FormFormError -> false
+        else -> true
+    }
+
 fun FormError.resolve(): FormError {
     return when (this) {
         is FormMapError -> error.resolve()
         is FormListError -> error.resolve()
         is FormSetError -> error.resolve()
+        is FormFormError -> error.resolve()
         else -> this
     }
 }
