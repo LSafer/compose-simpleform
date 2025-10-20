@@ -91,7 +91,9 @@ class FormMapFormField<K, V : Form>(
         value.toMap() != latestValue || value.values.any { it.isDirty }
     }
     override val errors by derivedStateOf {
-        listOfNotNull(error) + value.values.flatMap { it.errors }
+        listOfNotNull(error) + value.flatMap { (k, v) ->
+            v.errors.map { FormMapError(k, v, it) }
+        }
     }
 
     override val isValid by derivedStateOf {
@@ -142,7 +144,9 @@ class FormListFormField<E : Form>(
         value.toList() != latestValue || value.any { it.isDirty }
     }
     override val errors by derivedStateOf {
-        listOfNotNull(error) + value.flatMap { it.errors }
+        listOfNotNull(error) + value.flatMapIndexed { i, e ->
+            e.errors.map { FormListError(i, e, it) }
+        }
     }
 
     override val isValid by derivedStateOf {
@@ -195,7 +199,9 @@ class FormSetFormField<E : Form>(
         value.toSet() != latestValue || value.any { it.isDirty }
     }
     override val errors by derivedStateOf {
-        listOfNotNull(error) + value.flatMap { it.errors }
+        listOfNotNull(error) + value.flatMap { e ->
+            e.errors.map { FormSetError(e, it) }
+        }
     }
 
     override val isValid by derivedStateOf {
