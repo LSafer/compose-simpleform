@@ -19,15 +19,15 @@ open class FormSetError(
     val error: FormError,
 ) : FormError(error.message)
 
-val FormError.asMapOrNull get() = this as FormMapError?
+val FormError.asMapOrNull get() = this as? FormMapError
 val FormError.mapKeyOrNull get() = asMapOrNull?.key
 val FormError.mapValueOrNull get() = asMapOrNull?.value
 
-val FormError.asListOrNull get() = this as FormListError?
+val FormError.asListOrNull get() = this as? FormListError
 val FormError.listIndexOrNull get() = asListOrNull?.index
 val FormError.listElementOrNull get() = asListOrNull?.element
 
-val FormError.asSetOrNull get() = this as FormSetError?
+val FormError.asSetOrNull get() = this as? FormSetError
 val FormError.setElementOrNull get() = asSetOrNull?.element
 
 fun FormError.resolve(): FormError {
