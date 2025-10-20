@@ -17,3 +17,9 @@ internal fun AbstractFormField<*>.ensureSafeToBindTo(form: Form) {
         "Cannot bind form to an already bound field of another form."
     }
 }
+
+internal fun FormField<*>.acceptInferredName(name: String) {
+    val base = resolve()
+    if (base.nameIsInitialized) return
+    base.name = name
+}

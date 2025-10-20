@@ -11,6 +11,11 @@ import androidx.compose.ui.focus.FocusRequester
 
 sealed interface FormField<T> {
     /**
+     * The name of this field.
+     */
+    val name: String
+
+    /**
      * The form this field belongs/bound to.
      */
     val form: Form
@@ -113,9 +118,13 @@ sealed interface SetFormField<E> : FormField<Set<E>> {
 }
 
 sealed class AbstractFormField<T> : FormField<T> {
+    override lateinit var name: String
+        internal set
+
     override lateinit var form: Form
         internal set
 
+    internal val nameIsInitialized = ::name.isInitialized
     internal val formIsInitialized = ::form.isInitialized
 
     override var error by mutableStateOf<FormError?>(null)

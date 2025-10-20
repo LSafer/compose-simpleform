@@ -1,5 +1,6 @@
 package net.lsafer.compose.simpleform
 
+import net.lsafer.compose.simpleform.internal.acceptInferredName
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -40,6 +41,7 @@ operator fun <T, F : FormField<T>> F.provideDelegate(
     property: KProperty<*>,
 ): ReadOnlyProperty<Any?, F> {
     thisRef.bind(this)
+    acceptInferredName(property.name)
     return ReadOnlyProperty { _, _ -> this }
 }
 
@@ -55,6 +57,7 @@ operator fun <T : Form> T.provideDelegate(
 ): ReadOnlyProperty<Any?, T> {
     val field = FormSingleFormField(this)
     thisRef.bind(field)
+    field.acceptInferredName(property.name)
     return ReadOnlyProperty { _, _ -> field.value }
 }
 
