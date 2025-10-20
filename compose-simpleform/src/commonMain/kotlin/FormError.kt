@@ -24,19 +24,19 @@ open class FormFormError(
     val error: FormError,
 ) : FormError(error.message)
 
-val FormError.asMapOrNull get() = this as? FormMapError
-val FormError.mapKeyOrNull get() = asMapOrNull?.key
-val FormError.mapValueOrNull get() = asMapOrNull?.value
+val FormError.asOfMapOrNull get() = this as? FormMapError
+val FormError.keyOfMapOrNull get() = asOfMapOrNull?.key
+val FormError.valueOfMapOrNull get() = asOfMapOrNull?.value
 
-val FormError.asListOrNull get() = this as? FormListError
-val FormError.listIndexOrNull get() = asListOrNull?.index
-val FormError.listElementOrNull get() = asListOrNull?.element
+val FormError.asOfListOrNull get() = this as? FormListError
+val FormError.indexOfListOrNull get() = asOfListOrNull?.index
+val FormError.elementOfListOrNull get() = asOfListOrNull?.element
 
-val FormError.asSetOrNull get() = this as? FormSetError
-val FormError.setElementOrNull get() = asSetOrNull?.element
+val FormError.asOfSetOrNull get() = this as? FormSetError
+val FormError.elementOfSetOrNull get() = asOfSetOrNull?.element
 
-val FormError.asFormOrNull get() = this as? FormFormError
-val FormError.formFieldOrNull get() = asFormOrNull?.field
+val FormError.asOfFormOrNull get() = this as? FormFormError
+val FormError.fieldOfFormOrNull get() = asOfFormOrNull?.field
 
 val FormError.isRoot: Boolean
     get() = when (this) {
