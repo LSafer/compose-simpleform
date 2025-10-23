@@ -56,3 +56,13 @@ fun FormError.resolve(): FormError {
         else -> this
     }
 }
+
+fun FormError.requestFocus(): Boolean {
+    return when (this) {
+        is FormMapError -> error.requestFocus()
+        is FormListError -> error.requestFocus()
+        is FormSetError -> error.requestFocus()
+        is FormFormError -> error.requestFocus() || field.focus.requestFocus()
+        else -> false
+    }
+}
