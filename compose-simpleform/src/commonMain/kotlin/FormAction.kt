@@ -1,8 +1,6 @@
 package net.lsafer.compose.simpleform
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
@@ -17,7 +15,7 @@ class FormAction(
     var loadingCount by mutableStateOf(0)
         private set
     val isLoading get() = loadingCount > 0
-    val isEnabled get() = !isLoading && condition()
+    val isEnabled get() = condition()
 
     operator fun invoke() {
         coroutineScope.launch {
