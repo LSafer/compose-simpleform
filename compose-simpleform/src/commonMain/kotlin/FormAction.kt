@@ -37,3 +37,14 @@ class FormAction(
 context(vm: ViewModel)
 fun FormAction(condition: () -> Boolean = { true }, block: suspend CoroutineScope.() -> Unit) =
     FormAction(vm.viewModelScope, condition, block)
+
+@Composable
+fun rememberFormAction(
+    condition: () -> Boolean = { true },
+    block: suspend CoroutineScope.() -> Unit
+): FormAction {
+    val coroutineScope = rememberCoroutineScope()
+    return remember {
+        FormAction(coroutineScope, condition, block)
+    }
+}
