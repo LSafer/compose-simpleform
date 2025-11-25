@@ -25,6 +25,14 @@ context(ctx: ValidatorScope<*>)
 operator fun <T> Validator<T>.invoke(value: T): Unit =
     recover({ invoke(ValidatorScope(value, this)) }, { ctx.raise(it) })
 
+context(ctx: ValidatorScope<*>)
+fun <T> use(value: T, validator: ValidatorScope<T>.() -> Unit) =
+    recover({ validator(ValidatorScope(value, this)) }) { ctx.raise(it) }
+
+context(ctx: ValidatorScope<*>)
+fun <T> use(value: T, catch: (FormError) -> FormError, validator: ValidatorScope<T>.() -> Unit) =
+    recover({ validator(ValidatorScope(value, this)) }) { ctx.raise(catch(it)) }
+
 @JvmName("each_Map")
 context(ctx: ValidatorScope<Map<K, V>>)
 fun <K, V> each(validator: ValidatorScope<V>.(K) -> Unit) {
