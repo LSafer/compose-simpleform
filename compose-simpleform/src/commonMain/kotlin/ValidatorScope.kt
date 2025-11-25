@@ -22,10 +22,6 @@ fun <T> Validator<T>.isValid(value: T): Boolean =
     recover({ invoke(ValidatorScope(value, this)); true }, { false })
 
 context(ctx: ValidatorScope<*>)
-operator fun <T> Validator<T>.invoke(value: T): Unit =
-    recover({ invoke(ValidatorScope(value, this)) }, { ctx.raise(it) })
-
-context(ctx: ValidatorScope<*>)
 fun <T> use(value: T, validator: ValidatorScope<T>.() -> Unit) =
     recover({ validator(ValidatorScope(value, this)) }) { ctx.raise(it) }
 
