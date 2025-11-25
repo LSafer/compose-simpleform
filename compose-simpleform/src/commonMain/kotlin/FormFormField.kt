@@ -60,6 +60,11 @@ class FormSingleFormField<T : Form>(
         value.clear()
     }
 
+    override fun clearErrors() {
+        error = null
+        value.clearErrors()
+    }
+
     override fun reset() {
         error = null
         value.reset()
@@ -106,6 +111,11 @@ class FormMapFormField<K, V : Form>(
     override fun clear() {
         error = null
         value.clear()
+    }
+
+    override fun clearErrors() {
+        error = null
+        value.values.forEach { it.clearErrors() }
     }
 
     override fun reset() {
@@ -161,6 +171,11 @@ class FormListFormField<E : Form>(
         value.clear()
     }
 
+    override fun clearErrors() {
+        error = null
+        value.forEach { it.clearErrors() }
+    }
+
     override fun reset() {
         error = null
         value.clear()
@@ -214,6 +229,11 @@ class FormSetFormField<E : Form>(
     override fun clear() {
         error = null
         value.clear()
+    }
+
+    override fun clearErrors() {
+        error = null
+        value.forEach { it.clearErrors() }
     }
 
     override fun reset() {

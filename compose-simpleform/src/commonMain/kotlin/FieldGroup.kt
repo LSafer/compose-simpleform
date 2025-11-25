@@ -62,5 +62,6 @@ class FieldGroup(val form: Form) {
 
     fun reset() = _fields.forEach { it.reset() }
     fun clear() = _fields.forEach { it.clear() }
+    fun clearErrors() = _fields.forEach { it.clearErrors() }
     fun validate() = _fields.forEach { it.validate() }
 }

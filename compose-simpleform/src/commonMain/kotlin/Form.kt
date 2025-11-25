@@ -109,6 +109,13 @@ abstract class Form(isDraft: Boolean = false) {
     }
 
     /**
+     * Change the errors of all fields.
+     */
+    fun clearErrors() {
+        _fields.forEach { it.clearErrors() }
+    }
+
+    /**
      * Run validation for all the fields.
      */
     fun validate() {

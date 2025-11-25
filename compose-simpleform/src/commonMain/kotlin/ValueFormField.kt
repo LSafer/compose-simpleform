@@ -22,6 +22,10 @@ sealed class ValueFormField<T>(
         setValue0(defaultValue)
     }
 
+    override fun clearErrors() {
+        error = null
+    }
+
     override fun reset() {
         error = null
         setValue0(latestValue)

@@ -84,6 +84,11 @@ sealed interface FormField<T> {
     fun clear()
 
     /**
+     * Change the errors of all fields.
+     */
+    fun clearErrors()
+
+    /**
      * Change field value to latest one.
      */
     fun reset()
