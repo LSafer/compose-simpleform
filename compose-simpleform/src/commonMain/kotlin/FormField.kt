@@ -33,6 +33,11 @@ sealed interface FormField<T> {
     val latestValue: T
 
     /**
+     * A free field to be used to store the fallback value (When no value was provided).
+     */
+    var fallbackValue: T
+
+    /**
      * The current validation or api error of the field.
      *
      * > Can be changed directly.

@@ -41,6 +41,7 @@ class FormSingleFormField<T : Form>(
     private val validator: Validator<T> = { },
 ) : FormFormField<T>(), SingleFormField<T> {
     override var value by mutableStateOf(initialValue)
+    override var fallbackValue by mutableStateOf(initialValue)
     override var latestValue by mutableStateOf(initialValue)
         private set
 
@@ -87,6 +88,7 @@ class FormMapFormField<K, V : Form>(
     private val validator: Validator<Map<K, V>> = { },
 ) : FormFormField<Map<K, V>>(), MapFormField<K, V> {
     override val value = mutableStateMapOf<K, V>().also { it.putAll(initialValue) }
+    override var fallbackValue by mutableStateOf(initialValue)
     override var latestValue by mutableStateOf(initialValue)
         private set
 
@@ -145,6 +147,7 @@ class FormListFormField<E : Form>(
     private val validator: Validator<List<E>> = { },
 ) : FormFormField<List<E>>(), ListFormField<E> {
     override val value = mutableStateListOf<E>().also { it.addAll(initialValue) }
+    override var fallbackValue by mutableStateOf(initialValue)
     override var latestValue by mutableStateOf(initialValue)
         private set
 
@@ -205,6 +208,7 @@ class FormSetFormField<E : Form>(
     private val validator: Validator<Set<E>> = { },
 ) : FormFormField<Set<E>>(), SetFormField<E> {
     override val value = mutableStateSetOf<E>().also { it.addAll(initialValue) }
+    override var fallbackValue by mutableStateOf(initialValue)
     override var latestValue by mutableStateOf(initialValue)
         private set
 

@@ -8,6 +8,7 @@ sealed class ValueFormField<T>(
      */
     val defaultValue: T,
 ) : AbstractFormField<T>() {
+    override var fallbackValue by mutableStateOf(defaultValue)
     override var latestValue by mutableStateOf(defaultValue)
         private set
 
