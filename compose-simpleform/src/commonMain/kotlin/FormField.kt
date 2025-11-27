@@ -124,8 +124,6 @@ sealed interface SetFormField<E> : FormField<Set<E>> {
 
 sealed class AbstractFormField<T> : FormField<T> {
     override lateinit var name: String
-        internal set
-
     override lateinit var form: Form
         internal set
 
