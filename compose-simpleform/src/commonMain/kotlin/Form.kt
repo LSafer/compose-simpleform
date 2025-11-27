@@ -64,9 +64,7 @@ abstract class Form(isDraft: Boolean = false) {
      * True, if all the fields in this form are set to their default values.
      */
     val isClear by derivedStateOf {
-        _fields.fold(true) { r, f ->
-            f.isClear && r
-        }
+        _fields.all { it.isClear }
     }
 
     /**
@@ -75,18 +73,14 @@ abstract class Form(isDraft: Boolean = false) {
      * > UI logic should ignore this when [isDraft] is true.
      */
     val isDirty by derivedStateOf {
-        _fields.fold(false) { r, f ->
-            f.isDirty || r
-        }
+        _fields.any { it.isDirty }
     }
 
     /**
      * True, indicating that all fields validation passed.
      */
     val isValid by derivedStateOf {
-        _fields.fold(true) { r, f ->
-            f.isValid && r
-        }
+        _fields.all { it.isValid }
     }
 
     /**
