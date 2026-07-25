@@ -2,6 +2,7 @@ package net.lsafer.compose.simpleform
 
 import net.lsafer.compose.simpleform.internal.acceptInferredName
 import kotlin.properties.ReadOnlyProperty
+import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 // group(<fields>)
@@ -54,11 +55,14 @@ operator fun <T, F : FormField<T>> F.provideDelegate(
 operator fun <T : Form> T.provideDelegate(
     thisRef: Form,
     property: KProperty<*>,
-): ReadOnlyProperty<Any?, T> {
+): ReadWriteProperty<Any?, T> {
     val field = FormSingleFormField(this)
     thisRef.bind(field)
     field.acceptInferredName(property.name)
-    return ReadOnlyProperty { _, _ -> field.value }
+    return object : ReadWriteProperty<Any?, T> {
+        override fun getValue(thisRef: Any?, property: KProperty<*>) = field.value
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) = run { field.value = value }
+    }
 }
 
 // <groups> + <field-spec>
