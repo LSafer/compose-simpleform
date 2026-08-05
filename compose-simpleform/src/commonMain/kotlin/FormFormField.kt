@@ -49,6 +49,9 @@ class FormSingleFormField<T : Form>(
 
     override val isDirty by derivedStateOf { value.isDirty }
     override val errors by derivedStateOf { listOfNotNull(error) + value.errors }
+    override val allErrors by derivedStateOf {
+        listOfNotNull(error, validator.validate(value)) + value.allErrors
+    }
 
     override val isValid by derivedStateOf {
         validator.isValid(value) && value.isValid
@@ -100,6 +103,11 @@ class FormMapFormField<K, V : Form>(
     override val errors by derivedStateOf {
         listOfNotNull(error) + value.flatMap { (k, v) ->
             v.errors.map { FormMapError(k, v, it) }
+        }
+    }
+    override val allErrors by derivedStateOf {
+        listOfNotNull(error, validator.validate(value.toMap())) + value.flatMap { (k, v) ->
+            v.allErrors.map { FormMapError(k, v, it) }
         }
     }
 
@@ -161,6 +169,11 @@ class FormListFormField<E : Form>(
             e.errors.map { FormListError(i, e, it) }
         }
     }
+    override val allErrors by derivedStateOf {
+        listOfNotNull(error, validator.validate(value.toList())) + value.flatMapIndexed { i, e ->
+            e.allErrors.map { FormListError(i, e, it) }
+        }
+    }
 
     override val isValid by derivedStateOf {
         validator.isValid(value.toList()) &&
@@ -220,6 +233,11 @@ class FormSetFormField<E : Form>(
     override val errors by derivedStateOf {
         listOfNotNull(error) + value.flatMap { e ->
             e.errors.map { FormSetError(e, it) }
+        }
+    }
+    override val allErrors by derivedStateOf {
+        listOfNotNull(error, validator.validate(value.toSet())) + value.flatMap { e ->
+            e.allErrors.map { FormSetError(e, it) }
         }
     }
 

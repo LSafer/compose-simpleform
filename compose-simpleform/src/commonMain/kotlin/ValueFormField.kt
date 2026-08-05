@@ -10,7 +10,7 @@ sealed class ValueFormField<T>(
 ) : AbstractFormField<T>() {
     override var fallbackValue by mutableStateOf(defaultValue)
     override var latestValue by mutableStateOf(defaultValue)
-        private set
+        protected set
 
     override val errors by derivedStateOf {
         listOfNotNull(error)
@@ -47,6 +47,10 @@ class ValueSingleFormField<T>(
     override val isClear by derivedStateOf { value == defaultValue }
     override val isDirty by derivedStateOf { value != latestValue }
 
+    override val allErrors by derivedStateOf {
+        listOfNotNull(error, validator.validate(value))
+    }
+
     override val isValid by derivedStateOf {
         validator.isValid(value)
     }
@@ -69,6 +73,10 @@ class ValueMapFormField<K, V>(
     override val value = mutableStateMapOf<K, V>().also { it.putAll(defaultValue) }
     override val isClear by derivedStateOf { value.toMap() == defaultValue }
     override val isDirty by derivedStateOf { value.toMap() != latestValue }
+
+    override val allErrors by derivedStateOf {
+        listOfNotNull(error, validator.validate(value.toMap()))
+    }
 
     override val isValid by derivedStateOf {
         validator.isValid(value.toMap())
@@ -93,6 +101,10 @@ class ValueListFormField<E>(
     override val value = mutableStateListOf<E>().also { it.addAll(defaultValue) }
     override val isClear by derivedStateOf { value.toList() == defaultValue }
     override val isDirty by derivedStateOf { value.toList() != latestValue }
+
+    override val allErrors by derivedStateOf {
+        listOfNotNull(error, validator.validate(value.toList()))
+    }
 
     override val isValid by derivedStateOf {
         validator.isValid(value.toList())
@@ -120,6 +132,10 @@ class ValueSetFormField<E>(
     override val value = mutableStateSetOf<E>().also { it.addAll(defaultValue) }
     override val isClear by derivedStateOf { value.toSet() == defaultValue }
     override val isDirty by derivedStateOf { value.toSet() != latestValue }
+
+    override val allErrors by derivedStateOf {
+        listOfNotNull(error, validator.validate(value.toSet()))
+    }
 
     override val isValid by derivedStateOf {
         validator.isValid(value.toSet())

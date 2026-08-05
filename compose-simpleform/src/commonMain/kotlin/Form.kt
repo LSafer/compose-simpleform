@@ -61,6 +61,15 @@ abstract class Form(isDraft: Boolean = false) {
     }
 
     /**
+     * A list of all error messages of fields. (Including live validator errors)
+     */
+    val allErrors by derivedStateOf {
+        _fields.flatMap { f ->
+            f.allErrors.map { FormFormError(f, it) }
+        }
+    }
+
+    /**
      * True, if all the fields in this form are set to their default values.
      */
     val isClear by derivedStateOf {

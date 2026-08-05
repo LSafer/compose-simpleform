@@ -50,6 +50,11 @@ sealed interface FormField<T> {
     val errors: List<FormError>
 
     /**
+     * A list of the errors produced by this field and all its subfields (if any). (Including live validator errors)
+     */
+    val allErrors: List<FormError>
+
+    /**
      * True, if [value] is set to the default value.
      */
     val isClear: Boolean
