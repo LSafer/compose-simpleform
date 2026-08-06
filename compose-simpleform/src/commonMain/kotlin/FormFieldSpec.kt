@@ -72,28 +72,28 @@ fun <K, V, O> fieldMap(
 //
 
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
-fun <T : Form> fieldForm(
+fun <T : Form?> fieldForm(
     initialValue: T,
     validator: Validator<T> = { },
 ): FormSingleFormField<T> =
     FormSingleFormField(initialValue, validator)
 
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
-fun <E : Form> fieldFormList(
+fun <E : Form?> fieldFormList(
     initialValue: List<E> = emptyList(),
     validator: Validator<List<E>> = { },
 ): FormListFormField<E> =
     FormListFormField(initialValue, validator)
 
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
-fun <E : Form> fieldFormSet(
+fun <E : Form?> fieldFormSet(
     initialValue: Set<E> = emptySet(),
     validator: Validator<Set<E>> = { },
 ): FormSetFormField<E> =
     FormSetFormField(initialValue, validator)
 
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
-fun <K, V : Form> fieldFormMap(
+fun <K, V : Form?> fieldFormMap(
     initialValue: Map<K, V> = emptyMap(),
     validator: Validator<Map<K, V>> = { },
 ): FormMapFormField<K, V> =
@@ -102,28 +102,28 @@ fun <K, V : Form> fieldFormMap(
 //
 
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
-fun <T : Form, O> fieldForm(
+fun <T : Form?, O> fieldForm(
     codec: FormCodec<T, O, SingleFormField<T>>,
     initialValue: T,
     validator: Validator<T> = { },
 ) = fieldForm(initialValue, validator).transform(codec)
 
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
-fun <E : Form, O> fieldFormList(
+fun <E : Form?, O> fieldFormList(
     codec: FormCodec<List<E>, O, ListFormField<E>>,
     initialValue: List<E> = emptyList(),
     validator: Validator<List<E>> = { },
 ) = fieldFormList(initialValue, validator).transform(codec)
 
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
-fun <E : Form, O> fieldFormSet(
+fun <E : Form?, O> fieldFormSet(
     codec: FormCodec<Set<E>, O, SetFormField<E>>,
     initialValue: Set<E> = emptySet(),
     validator: Validator<Set<E>> = { },
 ) = fieldFormSet(initialValue, validator).transform(codec)
 
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
-fun <K, V : Form, O> fieldFormMap(
+fun <K, V : Form?, O> fieldFormMap(
     codec: FormCodec<Map<K, V>, O, MapFormField<K, V>>,
     initialValue: Map<K, V> = emptyMap(),
     validator: Validator<Map<K, V>> = { },

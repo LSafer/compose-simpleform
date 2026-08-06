@@ -52,7 +52,7 @@ operator fun <T, F : FormField<T>> F.provideDelegate(
  * return a readonly delegate to the form passed as [this].
  */
 @OptIn(DelicateSimpleFormApi::class)
-operator fun <T : Form> T.provideDelegate(
+operator fun <T : Form?> T.provideDelegate(
     thisRef: Form,
     property: KProperty<*>,
 ): ReadWriteProperty<Any?, T> {

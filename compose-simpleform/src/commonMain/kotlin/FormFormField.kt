@@ -36,7 +36,7 @@ import androidx.compose.runtime.*
 sealed class FormFormField<T> : AbstractFormField<T>()
 
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
-class FormSingleFormField<T : Form>(
+class FormSingleFormField<T : Form?>(
     initialValue: T,
     private val validator: Validator<T> = { },
 ) : FormFormField<T>(), SingleFormField<T> {
@@ -45,33 +45,34 @@ class FormSingleFormField<T : Form>(
     override var latestValue by mutableStateOf(initialValue)
         private set
 
-    override val isClear get() = value.isClear
+    override val isClear get() = value?.isClear ?: true
 
-    override val isDirty by derivedStateOf { value.isDirty }
-    override val errors by derivedStateOf { listOfNotNull(error) + value.errors }
+    override val isDirty by derivedStateOf { value != latestValue || value?.isDirty ?: false }
+    override val errors by derivedStateOf { listOfNotNull(error) + value?.errors.orEmpty() }
     override val allErrors by derivedStateOf {
-        listOfNotNull(error, validator.validate(value)) + value.allErrors
+        listOfNotNull(error, validator.validate(value)) + value?.allErrors.orEmpty()
     }
 
     override val isValid by derivedStateOf {
-        validator.isValid(value) && value.isValid
+        validator.isValid(value) && value?.isValid ?: true
     }
 
     override fun get() = value
 
     override fun clear() {
         error = null
-        value.clear()
+        value?.clear()
     }
 
     override fun clearErrors() {
         error = null
-        value.clearErrors()
+        value?.clearErrors()
     }
 
     override fun reset() {
         error = null
-        value.reset()
+        value = latestValue
+        value?.reset()
     }
 
     override fun update(newValue: T) {
@@ -81,12 +82,12 @@ class FormSingleFormField<T : Form>(
 
     override fun validate() {
         error = validator.validate(value)
-        value.validate()
+        value?.validate()
     }
 }
 
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
-class FormMapFormField<K, V : Form>(
+class FormMapFormField<K, V : Form?>(
     initialValue: Map<K, V>,
     private val validator: Validator<Map<K, V>> = { },
 ) : FormFormField<Map<K, V>>(), MapFormField<K, V> {
@@ -98,22 +99,22 @@ class FormMapFormField<K, V : Form>(
     override val isClear get() = value.isEmpty()
 
     override val isDirty by derivedStateOf {
-        value.toMap() != latestValue || value.values.any { it.isDirty }
+        value.toMap() != latestValue || value.values.any { it?.isDirty ?: false }
     }
     override val errors by derivedStateOf {
         listOfNotNull(error) + value.flatMap { (k, v) ->
-            v.errors.map { FormMapError(k, v, it) }
+            v?.errors?.map { FormMapError(k, v, it) }.orEmpty()
         }
     }
     override val allErrors by derivedStateOf {
         listOfNotNull(error, validator.validate(value.toMap())) + value.flatMap { (k, v) ->
-            v.allErrors.map { FormMapError(k, v, it) }
+            v?.allErrors?.map { FormMapError(k, v, it) }.orEmpty()
         }
     }
 
     override val isValid by derivedStateOf {
         validator.isValid(value.toMap()) &&
-                value.values.all { it.isValid }
+                value.values.all { it?.isValid ?: true }
     }
 
     override fun get() = value.toMap()
@@ -125,14 +126,14 @@ class FormMapFormField<K, V : Form>(
 
     override fun clearErrors() {
         error = null
-        value.values.forEach { it.clearErrors() }
+        value.values.forEach { it?.clearErrors() }
     }
 
     override fun reset() {
         error = null
         value.clear()
         value.putAll(latestValue)
-        value.values.forEach { it.reset() }
+        value.values.forEach { it?.reset() }
     }
 
     override fun update(newValue: Map<K, V>) {
@@ -143,14 +144,13 @@ class FormMapFormField<K, V : Form>(
     }
 
     override fun validate() {
-        // No need to cache scope object here, this is only invoked on focus loss.
         error = validator.validate(value.toMap())
-        value.values.forEach { it.validate() }
+        value.values.forEach { it?.validate() }
     }
 }
 
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
-class FormListFormField<E : Form>(
+class FormListFormField<E : Form?>(
     initialValue: List<E>,
     private val validator: Validator<List<E>> = { },
 ) : FormFormField<List<E>>(), ListFormField<E> {
@@ -162,22 +162,22 @@ class FormListFormField<E : Form>(
     override val isClear get() = value.isEmpty()
 
     override val isDirty by derivedStateOf {
-        value.toList() != latestValue || value.any { it.isDirty }
+        value.toList() != latestValue || value.any { it?.isDirty ?: false }
     }
     override val errors by derivedStateOf {
         listOfNotNull(error) + value.flatMapIndexed { i, e ->
-            e.errors.map { FormListError(i, e, it) }
+            e?.errors?.map { FormListError(i, e, it) }.orEmpty()
         }
     }
     override val allErrors by derivedStateOf {
         listOfNotNull(error, validator.validate(value.toList())) + value.flatMapIndexed { i, e ->
-            e.allErrors.map { FormListError(i, e, it) }
+            e?.allErrors?.map { FormListError(i, e, it) }.orEmpty()
         }
     }
 
     override val isValid by derivedStateOf {
         validator.isValid(value.toList()) &&
-                value.all { it.isValid }
+                value.all { it?.isValid ?: true }
     }
 
     override fun get() = value.toList()
@@ -189,14 +189,14 @@ class FormListFormField<E : Form>(
 
     override fun clearErrors() {
         error = null
-        value.forEach { it.clearErrors() }
+        value.forEach { it?.clearErrors() }
     }
 
     override fun reset() {
         error = null
         value.clear()
         value.addAll(latestValue)
-        value.forEach { it.reset() }
+        value.forEach { it?.reset() }
     }
 
     override fun update(newValue: List<E>) {
@@ -208,7 +208,7 @@ class FormListFormField<E : Form>(
 
     override fun validate() {
         error = validator.validate(value.toList())
-        value.forEach { it.validate() }
+        value.forEach { it?.validate() }
     }
 
     fun update(newValue: Iterable<E>) =
@@ -216,7 +216,7 @@ class FormListFormField<E : Form>(
 }
 
 /** WARNING: This is still experimental | PLEASE READ DOCS OF [FormFormField] */
-class FormSetFormField<E : Form>(
+class FormSetFormField<E : Form?>(
     initialValue: Set<E>,
     private val validator: Validator<Set<E>> = { },
 ) : FormFormField<Set<E>>(), SetFormField<E> {
@@ -228,22 +228,22 @@ class FormSetFormField<E : Form>(
     override val isClear get() = value.isEmpty()
 
     override val isDirty by derivedStateOf {
-        value.toSet() != latestValue || value.any { it.isDirty }
+        value.toSet() != latestValue || value.any { it?.isDirty ?: false }
     }
     override val errors by derivedStateOf {
         listOfNotNull(error) + value.flatMap { e ->
-            e.errors.map { FormSetError(e, it) }
+            e?.errors?.map { FormSetError(e, it) }.orEmpty()
         }
     }
     override val allErrors by derivedStateOf {
         listOfNotNull(error, validator.validate(value.toSet())) + value.flatMap { e ->
-            e.allErrors.map { FormSetError(e, it) }
+            e?.allErrors?.map { FormSetError(e, it) }.orEmpty()
         }
     }
 
     override val isValid by derivedStateOf {
         validator.isValid(value.toSet()) &&
-                value.all { it.isValid }
+                value.all { it?.isValid ?: true }
     }
 
     override fun get() = value.toSet()
@@ -255,14 +255,14 @@ class FormSetFormField<E : Form>(
 
     override fun clearErrors() {
         error = null
-        value.forEach { it.clearErrors() }
+        value.forEach { it?.clearErrors() }
     }
 
     override fun reset() {
         error = null
         value.clear()
         value.addAll(latestValue)
-        value.forEach { it.reset() }
+        value.forEach { it?.reset() }
     }
 
     override fun update(newValue: Set<E>) {
@@ -274,7 +274,7 @@ class FormSetFormField<E : Form>(
 
     override fun validate() {
         error = validator.validate(value.toSet())
-        value.forEach { it.validate() }
+        value.forEach { it?.validate() }
     }
 
     fun update(newValue: Iterable<E>) =
