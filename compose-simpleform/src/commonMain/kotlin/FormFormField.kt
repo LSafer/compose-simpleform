@@ -78,6 +78,7 @@ class FormSingleFormField<T : Form?>(
     override fun update(newValue: T) {
         error = null
         latestValue = newValue
+        value = newValue
     }
 
     override fun validate() {
