@@ -74,6 +74,8 @@ sealed interface FormField<T> {
      */
     val isValid: Boolean
 
+    val isDirtyAndValid get() = isDirty && isValid
+
     /**
      * The focus requester set to the UI component.
      */
